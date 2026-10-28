@@ -2,14 +2,14 @@ name: FunkyFama
 version: '${version}'
 main: lat.funkypunky.fama.FunkyFama
 api-version: '26.1'
-description: Fama de jugadores y Bandas para FUNKY PUNKY MC (mobs, vaults y cofres de Trial Chambers, reinicio diario y evento x2).
+description: Fama de jugadores y Bandas para FUNKY PUNKY MC (mobs, vaults y cofres de Trial Chambers, reinicio diario y eventos de Fama).
 authors: [SAULPLAY112]
 softdepend: [PlaceholderAPI, Towny, Vault]
 
 commands:
   fama:
     description: Ver y administrar la Fama.
-    usage: /fama [ver|top|info|dar|quitar|establecer|banda|x2|reiniciar|temporada|recargar]
+    usage: /fama [ver|top|info|dar|quitar|establecer|banda|evento|reiniciar|temporada|recargar]
     aliases: [fame]
 
 permissions:
@@ -25,8 +25,8 @@ permissions:
   funkyfama.admin:
     description: Dar, quitar o establecer Fama (jugadores y Bandas) y recargar el config.
     default: op
-  funkyfama.x2:
-    description: Activar o desactivar el evento x2.
+  funkyfama.evento:
+    description: Activar o desactivar el evento de Fama (/fama evento <multiplicador> <tiempo>).
     default: op
   funkyfama.reiniciar:
     description: Reiniciar los trials a mano.

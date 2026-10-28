@@ -4,6 +4,9 @@ import com.palmergames.bukkit.towny.TownyAPI;
 import com.palmergames.bukkit.towny.object.Resident;
 import com.palmergames.bukkit.towny.object.Town;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -31,5 +34,22 @@ final class TownyBandas implements Bandas {
     public Info buscar(String nombre) {
         Town t = TownyAPI.getInstance().getTown(nombre);
         return t == null ? null : new Info(t.getUUID(), t.getName());
+    }
+
+    @Override
+    public List<Saldo> saldos(Collection<String> excluidas) {
+        List<Saldo> lista = new ArrayList<>();
+        for (Town t : TownyAPI.getInstance().getTowns()) {
+            try {
+                if (t.isRuined()) continue;
+                Resident alcalde = t.getMayor();
+                if (alcalde != null && alcalde.isNPC()) continue;   // el Mercado (pueblo NPC) es del servidor
+                if (excluidas.stream().anyMatch(x -> x.equalsIgnoreCase(t.getName()))) continue;
+                lista.add(new Saldo(t.getUUID(), t.getName(), t.getAccount().getHoldingBalance()));
+            } catch (Exception e) {
+                // Una Banda con datos raros no debe tumbar el top de todas las demás.
+            }
+        }
+        return lista;
     }
 }

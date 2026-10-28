@@ -33,7 +33,7 @@ public final class FunkyFama extends JavaPlugin {
     Bandas bandas;       // null si no hay Towny
     Economia economia;   // null si no hay Vault
     Fama fama;
-    X2 x2;
+    Evento evento;
     Tops tops;
 
     private long periodoVisto;
@@ -58,12 +58,12 @@ public final class FunkyFama extends JavaPlugin {
         }
 
         fama = new Fama(this);
-        x2 = new X2(this);
+        evento = new Evento(this);
         tops = new Tops(this);
 
         getServer().getPluginManager().registerEvents(new MobListener(this), this);
         getServer().getPluginManager().registerEvents(new TrialListener(this), this);
-        getServer().getPluginManager().registerEvents(x2, this);
+        getServer().getPluginManager().registerEvents(evento, this);
 
         Comando comando = new Comando(this);
         PluginCommand pc = getCommand("fama");
@@ -85,7 +85,7 @@ public final class FunkyFama extends JavaPlugin {
 
     @Override
     public void onDisable() {
-        if (x2 != null) x2.ocultarBarra();
+        if (evento != null) evento.ocultarBarra();
         if (datos != null) {
             try {
                 datos.escribir(datos.foto(inicioPeriodo()));
@@ -100,7 +100,7 @@ public final class FunkyFama extends JavaPlugin {
         cargarReinicio();
         programarGuardado();
         periodoVisto = inicioPeriodo();
-        x2.tick();
+        evento.tick();
     }
 
     private void cargarReinicio() {
@@ -141,7 +141,7 @@ public final class FunkyFama extends JavaPlugin {
     }
 
     private void cadaSegundo() {
-        x2.tick();
+        evento.tick();
 
         long periodo = inicioPeriodo();
         if (periodo != periodoVisto) {

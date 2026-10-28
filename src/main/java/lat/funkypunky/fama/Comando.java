@@ -24,11 +24,12 @@ import java.util.UUID;
  * /fama                                    tu Fama
  * /fama ver <jugador>                      Fama de otro
  * /fama top [jugadores|bandas]             top 10
- * /fama info                               estado del x2 y del reinicio
+ * /fama info                               estado del evento y del reinicio
  * /fama dar|quitar <jugador> <n> [motivo]  (staff) premios de eventos, correcciones
  * /fama establecer <jugador> <n>           (staff)
  * /fama banda dar|quitar <banda> <n> [motivo]
- * /fama x2 activar <tiempo> | desactivar   tiempo: 30m, 2h, 1d (número solo = minutos)
+ * /fama evento <multiplicador> <tiempo>    ej. /fama evento 3 2h · /fama evento desactivar
+ *                                          tiempo: 30m, 2h, 1d (número solo = minutos)
  * /fama reiniciar                          reinicia los trials ya
  * /fama temporada confirmar                borra la Fama de todos (guarda copia)
  * /fama recargar
@@ -64,7 +65,7 @@ final class Comando implements TabExecutor {
             case "quitar": return ajustar(s, a, -1);
             case "establecer": return establecer(s, a);
             case "banda": return banda(s, a);
-            case "x2": return x2(s, a);
+            case "evento": return evento(s, a);
             case "reiniciar": return reiniciar(s);
             case "temporada": return temporada(s, a);
             case "recargar": {
@@ -106,10 +107,11 @@ final class Comando implements TabExecutor {
     }
 
     private boolean info(CommandSender s) {
-        String x2 = pl.x2.activo()
-                ? pl.texto("x2-si", "{tiempo}", FunkyFama.tiempo(pl.x2.restante()))
-                : pl.texto("x2-no");
-        s.sendMessage(pl.conPrefijo("info", "{x2}", x2, "{tiempo}", FunkyFama.tiempo(pl.msParaReinicio())));
+        String ev = pl.evento.activo()
+                ? pl.texto("evento-si", "{multiplicador}", String.valueOf(pl.evento.multiplicador()),
+                        "{tiempo}", FunkyFama.tiempo(pl.evento.restante()))
+                : pl.texto("evento-no");
+        s.sendMessage(pl.conPrefijo("info", "{evento}", ev, "{tiempo}", FunkyFama.tiempo(pl.msParaReinicio())));
         return true;
     }
 
@@ -185,18 +187,27 @@ final class Comando implements TabExecutor {
         return true;
     }
 
-    private boolean x2(CommandSender s, String[] a) {
-        if (!s.hasPermission("funkyfama.x2")) return sinPermiso(s);
-        if (a.length >= 2 && a[1].equalsIgnoreCase("desactivar")) {
-            pl.x2.desactivar(true);
-            pl.registrar(s.getName() + " desactivó el x2.");
+    private boolean evento(CommandSender s, String[] a) {
+        if (!s.hasPermission("funkyfama.evento")) return sinPermiso(s);
+        String uso = "/fama evento <multiplicador> <tiempo>  (ej. /fama evento 3 2h) · /fama evento desactivar";
+        if (a.length < 2) return info(s);
+        if (a[1].equalsIgnoreCase("desactivar")) {
+            if (!pl.evento.activo()) return uso(s, uso);
+            pl.evento.desactivar(true);
+            pl.registrar(s.getName() + " desactivó el evento de Fama.");
             return true;
         }
-        if (a.length < 3 || !a[1].equalsIgnoreCase("activar")) return uso(s, "/fama x2 activar <30m|2h|1d> · /fama x2 desactivar");
+        if (a.length < 3) return uso(s, uso);
+        Long mult = numero(a[1].toLowerCase().replace("x", ""));   // acepta "3" o "x3"
+        int max = pl.evento.multiplicadorMaximo();
+        if (mult == null || mult < 2 || mult > max) {
+            s.sendMessage(pl.conPrefijo("evento-multiplicador-invalido", "{max}", String.valueOf(max)));
+            return true;
+        }
         Long ms = duracion(a[2]);
         if (ms == null || ms <= 0) return error(s, "numero-invalido");
-        pl.x2.activar(ms);
-        pl.registrar(s.getName() + " activó el x2 por " + FunkyFama.tiempo(ms) + ".");
+        pl.evento.activar(mult.intValue(), ms);
+        pl.registrar(s.getName() + " activó el evento de Fama x" + mult + " por " + FunkyFama.tiempo(ms) + ".");
         return true;
     }
 
@@ -288,7 +299,7 @@ final class Comando implements TabExecutor {
             l.add("&f/fama dar|quitar [jugador] [n] [motivo] · &f/fama establecer [jugador] [n]");
             l.add("&f/fama banda dar|quitar [banda] [n] [motivo] · &f/fama recargar");
         }
-        if (s.hasPermission("funkyfama.x2")) l.add("&f/fama x2 activar [30m|2h|1d] · &f/fama x2 desactivar");
+        if (s.hasPermission("funkyfama.evento")) l.add("&f/fama evento [multiplicador] [tiempo] &7(ej. 3 2h) · &f/fama evento desactivar");
         if (s.hasPermission("funkyfama.reiniciar")) l.add("&f/fama reiniciar &7(reinicia los trials ya)");
         if (s.hasPermission("funkyfama.temporada")) l.add("&f/fama temporada confirmar &7(borra la Fama de todos)");
         for (String x : l) s.sendMessage(FunkyFama.color(x));
@@ -301,7 +312,7 @@ final class Comando implements TabExecutor {
         if (a.length == 1) {
             op.addAll(List.of("ver", "top", "info"));
             if (s.hasPermission("funkyfama.admin")) op.addAll(List.of("dar", "quitar", "establecer", "banda", "recargar"));
-            if (s.hasPermission("funkyfama.x2")) op.add("x2");
+            if (s.hasPermission("funkyfama.evento")) op.add("evento");
             if (s.hasPermission("funkyfama.reiniciar")) op.add("reiniciar");
             if (s.hasPermission("funkyfama.temporada")) op.add("temporada");
         } else if (a.length == 2) {
@@ -309,11 +320,11 @@ final class Comando implements TabExecutor {
                 case "ver", "dar", "quitar", "establecer" -> Bukkit.getOnlinePlayers().forEach(p -> op.add(p.getName()));
                 case "top" -> op.addAll(List.of("jugadores", "bandas"));
                 case "banda" -> op.addAll(List.of("dar", "quitar"));
-                case "x2" -> op.addAll(List.of("activar", "desactivar"));
+                case "evento" -> op.addAll(List.of("2", "3", "desactivar"));
                 case "temporada" -> op.add("confirmar");
                 default -> { }
             }
-        } else if (a.length == 3 && a[0].equalsIgnoreCase("x2") && a[1].equalsIgnoreCase("activar")) {
+        } else if (a.length == 3 && a[0].equalsIgnoreCase("evento") && !a[1].equalsIgnoreCase("desactivar")) {
             op.addAll(List.of("30m", "1h", "2h", "1d"));
         }
         String ultimo = a[a.length - 1].toLowerCase();

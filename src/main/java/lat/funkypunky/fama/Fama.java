@@ -9,7 +9,7 @@ import java.util.UUID;
 /**
  * Las reglas de la Fama en un solo lugar:
  * - quién puede ganarla (el staff no),
- * - cuánto vale con el x2,
+ * - cuánto vale durante un evento,
  * - el límite diario de los mobs,
  * - y la suma a la Banda.
  */
@@ -31,8 +31,8 @@ final class Fama {
     long otorgar(Player p, long base, String fuente, boolean aplicaX2) {
         if (base <= 0 || excluido(p)) return 0;
 
-        boolean conX2 = aplicaX2 && pl.x2.duplica("duplicar-fama");
-        long total = conX2 ? base * pl.x2.multiplicador() : base;
+        boolean conX2 = aplicaX2 && pl.evento.duplica("duplicar-fama");
+        long total = conX2 ? base * pl.evento.multiplicador() : base;
 
         Datos.Jugador j = pl.datos.jugador(p.getUniqueId(), p.getName());
         j.fama += total;
@@ -42,11 +42,11 @@ final class Fama {
         p.sendActionBar(pl.msg("actionbar",
                 "{fama}", FunkyFama.num(total),
                 "{fuente}", pl.texto("fuentes." + fuente),
-                "{x2}", conX2 ? pl.texto("actionbar-x2") : ""));
+                "{x2}", conX2 ? pl.texto("actionbar-evento", "{multiplicador}", String.valueOf(pl.evento.multiplicador())) : ""));
         return total;
     }
 
-    /** Fama por mobs, con el límite diario (el límite se cuenta SIN el x2). */
+    /** Fama por mobs, con el límite diario (0 = sin límite; se cuenta SIN el multiplicador). */
     void otorgarMob(Player p, long base) {
         if (base <= 0 || excluido(p)) return;
 

@@ -25,7 +25,7 @@ final class Datos {
     static final class Jugador {
         String nombre;
         long fama;
-        long mobsHoy;     // Fama de mobs ganada en el periodo actual (sin x2)
+        long mobsHoy;     // Fama de mobs ganada en el periodo actual (sin multiplicador)
         long mobsDesde;   // inicio del periodo en que se contó mobsHoy
     }
 
@@ -46,6 +46,7 @@ final class Datos {
     final Map<String, Cofre> cofres = new HashMap<>();
     volatile long x2Fin;
     volatile long x2Duracion;
+    volatile int eventoMult = 1;
     volatile long reinicioManual;
 
     private final File archivo;
@@ -131,6 +132,7 @@ final class Datos {
 
         x2Fin = y.getLong("x2-fin");
         x2Duracion = y.getLong("x2-duracion");
+        eventoMult = Math.max(1, y.getInt("evento-multiplicador", 1));
         reinicioManual = y.getLong("reinicio-manual");
     }
 
@@ -160,6 +162,7 @@ final class Datos {
         });
         y.set("x2-fin", x2Fin);
         y.set("x2-duracion", x2Duracion);
+        y.set("evento-multiplicador", eventoMult);
         y.set("reinicio-manual", reinicioManual);
         cambios = false;
         return y.saveToString();

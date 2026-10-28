@@ -26,8 +26,8 @@ import java.util.UUID;
 
 /**
  * Trial Chambers:
- * 1) Vault abierto con llave  -> Fama (+ botín x2 si hay evento) y se anota cuándo lo abrió.
- * 2) Cofre/barril de trial     -> Fama (+ botín x2) y se anota el cofre para rellenarlo mañana.
+ * 1) Vault abierto con llave  -> Fama (+ botín multiplicado si hay evento) y se anota cuándo lo abrió.
+ * 2) Cofre/barril de trial     -> Fama (+ botín multiplicado) y se anota el cofre para rellenarlo mañana.
  * 3) Clic derecho en un vault o cofre de trial -> si ya pasó el reinicio diario, se "rearma".
  */
 final class TrialListener implements Listener {
@@ -52,8 +52,8 @@ final class TrialListener implements Listener {
         boolean siniestro = b.getBlockData().getAsString().contains("ominous=true");
         FileConfiguration c = pl.getConfig();
 
-        if (pl.x2.duplica("duplicar-botin-vaults")) {
-            e.setDispensedLoot(X2.multiplicar(e.getDispensedLoot(), pl.x2.multiplicador()));
+        if (pl.evento.duplica("duplicar-botin-vaults")) {
+            e.setDispensedLoot(Evento.multiplicar(e.getDispensedLoot(), pl.evento.multiplicador()));
         }
 
         pl.datos.vaults.computeIfAbsent(Datos.clave(b), k -> new HashMap<>())
@@ -87,8 +87,8 @@ final class TrialListener implements Listener {
 
         if (!(e.getEntity() instanceof Player p)) return;   // una tolva no gana Fama
 
-        if (pl.x2.duplica("duplicar-botin-cofres")) {
-            e.setLoot(X2.multiplicar(new ArrayList<>(e.getLoot()), pl.x2.multiplicador()));
+        if (pl.evento.duplica("duplicar-botin-cofres")) {
+            e.setLoot(Evento.multiplicar(new ArrayList<>(e.getLoot()), pl.evento.multiplicador()));
         }
 
         String nombre = k.getKey().substring(PREFIJO.length());

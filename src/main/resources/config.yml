@@ -29,8 +29,9 @@ mobs:
   ignorar-spawners: true
   # Fama extra por cada mob que salió de un trial spawner.
   extra-trial-spawner: 1
-  # Máximo de Fama por mobs al día por jugador (se cuenta SIN el x2). 0 = sin límite.
-  limite-diario: 50
+  # Máximo de Fama por mobs al día por jugador (se cuenta SIN el multiplicador del evento).
+  # 0 = sin límite (decisión de Saúl, 27-oct). Si aparecen granjas AFK de mobs, poner por ejemplo 300.
+  limite-diario: 0
   # Valores propios por tipo (nombre en inglés, como en el juego).
   valores:
     WARDEN: 50
@@ -64,10 +65,14 @@ trials:
   # (el dinero de los trials es solo para el top 3).
   dinero-por-vault: 0
 
-# ---------- Evento x2 ----------
-x2:
-  multiplicador: 2
-  # Qué se duplica durante el evento.
+# ---------- Evento de Fama ----------
+# Se activa con: /fama evento <multiplicador> <tiempo>   (ej. /fama evento 3 2h)
+evento:
+  # El más alto que se puede poner (evita un "/fama evento 30" por error de dedo).
+  multiplicador-maximo: 5
+  # Sonido para todos al empezar (nombre de Minecraft Java; Geyser lo traduce). '' = sin sonido.
+  sonido: 'minecraft:event.raid.horn'
+  # Qué se multiplica durante el evento.
   duplicar-fama: true
   duplicar-botin-vaults: true
   duplicar-botin-cofres: true
@@ -81,6 +86,9 @@ bandas:
   # La Fama que gana un jugador también se suma a su Banda en ese momento.
   # Si se sale de la Banda, la Fama ganada se queda en la Banda (así no se puede "llevar" ni "traspasar").
   sumar-fama: true
+  # Bandas que no salen en el top de dinero (además del Mercado, que es NPC y se excluye solo).
+  # Ejemplo: la Banda de prueba "FP" mientras exista.
+  excluir-del-top-dinero: [FP]
 
 # ---------- Guardado ----------
 guardar-cada-minutos: 5
@@ -89,7 +97,7 @@ guardar-cada-minutos: 5
 mensajes:
   prefijo: '&#FF40FF&l✦ &dFama &8» '
   actionbar: '&d+{fama} Fama &7({fuente}){x2}'
-  actionbar-x2: ' &6&lx2'
+  actionbar-evento: ' &6&lx{multiplicador}'
   fuentes:
     mob: 'mob'
     vault: 'vault'
@@ -105,12 +113,23 @@ mensajes:
   top-titulo-bandas: '&#FF40FF&l✦ Top Fama: Bandas ✦'
   top-linea: '&d#{puesto} &f{nombre} &8» &d{fama}'
   top-vacio: '&7Todavía nadie tiene Fama.'
-  info: '&fx2: {x2} &8| &fLos trials se reinician en &d{tiempo}'
-  x2-si: '&6&lACTIVO &7({tiempo})'
-  x2-no: '&7apagado'
-  x2-activado: '&6&l¡TRIALS x2! &fDoble de Fama y de botín durante &e{tiempo}&f.'
-  x2-terminado: '&7El evento &6x2 &7terminó. ¡Gracias por jugar!'
-  x2-bossbar: '&6&l✦ TRIALS x2 ✦ &f{tiempo}'
+  info: '&fEvento: {evento} &8| &fLos trials se reinician en &d{tiempo}'
+  evento-si: '&6&lx{multiplicador} ACTIVO &7({tiempo})'
+  evento-no: '&7apagado'
+  # Anuncio en el chat al activar el evento. Una línea por renglón. Variables: {multiplicador} {tiempo}
+  evento-activado:
+    - '&8━━━━━━━━━━━━━━━━━━━━━━━━'
+    - '&6&l✦ ¡SE HA ACTIVADO EL EVENTO DE LA FAMA! ✦'
+    - '&e&l✦ TODO VALE x{multiplicador} ✦ &fdurante &e{tiempo}'
+    - '&f¡Corre a las &dtrials&f, abre vaults, saquea cofres y &cmata enemigos&f!'
+    - '&fHaz que &dtu Banda &f(o tú solito) tenga &6&lMÁS FAMA &fque nadie.'
+    - '&7Revisa quién va ganando con &f/fama top bandas'
+    - '&8━━━━━━━━━━━━━━━━━━━━━━━━'
+  evento-titulo: '&6&l¡EVENTO DE FAMA x{multiplicador}!'
+  evento-subtitulo: '&f¡Corre a las &dtrials&f! &7({tiempo})'
+  evento-terminado: '&7El evento de Fama terminó. ¡Gracias por jugar! &fMira el top: &d/fama top bandas'
+  evento-bossbar: '&6&l✦ EVENTO DE FAMA x{multiplicador} ✦ &f{tiempo}'
+  evento-multiplicador-invalido: '&cEl multiplicador va de &f2 &ca &f{max}&c. Ejemplo: &f/fama evento 3 2h'
   reinicio-auto: '&a¡Los trials se reiniciaron! Los vaults y cofres vuelven a estar disponibles.'
   reinicio-manual: '&a¡El staff reinició los trials! Los vaults y cofres vuelven a estar disponibles.'
   admin-hecho: '&a{accion} &f{cantidad} &ade Fama a &f{objetivo}&a. Ahora tiene &d{fama}&a.'

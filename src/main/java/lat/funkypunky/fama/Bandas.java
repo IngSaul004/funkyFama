@@ -18,4 +18,12 @@ interface Bandas {
 
     /** Buscar una Banda por nombre, o null. */
     Info buscar(String nombre);
+
+    record Saldo(UUID id, String nombre, double dinero) {}
+
+    /**
+     * Dinero en el banco de cada Banda. No incluye pueblos de NPC (el Mercado),
+     * Bandas en ruinas ni las de la lista de excluidas.
+     */
+    java.util.List<Saldo> saldos(java.util.Collection<String> excluidas);
 }

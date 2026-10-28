@@ -15,12 +15,14 @@ import java.util.List;
  *  %funkyfama_fama_banda%               Fama de su Banda, con comas
  *  %funkyfama_mobs_hoy%                 Fama de mobs ganada hoy
  *  %funkyfama_mobs_limite%              Límite diario de Fama por mobs
- *  %funkyfama_x2%                       Texto: ACTIVO (tiempo) / apagado
- *  %funkyfama_x2_activo%                true / false (para condiciones de TAB)
- *  %funkyfama_x2_restante%              Tiempo que le queda al x2
+ *  %funkyfama_evento%                   Texto: x3 ACTIVO (tiempo) / apagado
+ *  %funkyfama_evento_activo%            true / false (para condiciones de TAB)
+ *  %funkyfama_evento_multiplicador%     2, 3... (1 si no hay evento)
+ *  %funkyfama_evento_restante%          Tiempo que le queda al evento
  *  %funkyfama_reinicio%                 Tiempo para el próximo reinicio de los trials
  *  %funkyfama_top_jugador_<n>_nombre%   y _valor
- *  %funkyfama_top_banda_<n>_nombre%     y _valor
+ *  %funkyfama_top_banda_<n>_nombre%     y _valor   (Bandas por Fama)
+ *  %funkyfama_top_banda_dinero_<n>_nombre%  y _valor  (Bandas por dinero en su banco de Towny)
  */
 final class Expansion extends PlaceholderExpansion {
 
@@ -54,15 +56,19 @@ final class Expansion extends PlaceholderExpansion {
     public String onRequest(OfflinePlayer jugador, String params) {
         String p = params.toLowerCase();
 
-        if (p.startsWith("top_jugador_")) return top(pl.tops.jugadores(), p.substring("top_jugador_".length()));
-        if (p.startsWith("top_banda_")) return top(pl.tops.bandas(), p.substring("top_banda_".length()));
+        // El orden importa: "top_banda_dinero_" empieza igual que "top_banda_", así que va primero.
+        if (p.startsWith("top_jugador_")) return top(pl.tops.jugadores(), p.substring("top_jugador_".length()), "");
+        if (p.startsWith("top_banda_dinero_")) return top(pl.tops.bandasDinero(), p.substring("top_banda_dinero_".length()), "$");
+        if (p.startsWith("top_banda_")) return top(pl.tops.bandas(), p.substring("top_banda_".length()), "");
 
         switch (p) {
-            case "x2": return pl.x2.activo()
-                    ? pl.texto("x2-si", "{tiempo}", FunkyFama.tiempo(pl.x2.restante()))
-                    : pl.texto("x2-no");
-            case "x2_activo": return String.valueOf(pl.x2.activo());
-            case "x2_restante": return pl.x2.activo() ? FunkyFama.tiempo(pl.x2.restante()) : "0s";
+            case "evento", "x2": return pl.evento.activo()
+                    ? pl.texto("evento-si", "{multiplicador}", String.valueOf(pl.evento.multiplicador()),
+                            "{tiempo}", FunkyFama.tiempo(pl.evento.restante()))
+                    : pl.texto("evento-no");
+            case "evento_activo", "x2_activo": return String.valueOf(pl.evento.activo());
+            case "evento_multiplicador": return String.valueOf(pl.evento.activo() ? pl.evento.multiplicador() : 1);
+            case "evento_restante", "x2_restante": return pl.evento.activo() ? FunkyFama.tiempo(pl.evento.restante()) : "0s";
             case "reinicio": return FunkyFama.tiempo(pl.msParaReinicio());
             case "mobs_limite": return String.valueOf(pl.getConfig().getLong("mobs.limite-diario", 50));
             default: break;
@@ -90,7 +96,7 @@ final class Expansion extends PlaceholderExpansion {
     }
 
     /** resto = "<n>_nombre" o "<n>_valor" */
-    private String top(List<Tops.Fila> lista, String resto) {
+    private String top(List<Tops.Fila> lista, String resto, String simbolo) {
         int guion = resto.indexOf('_');
         if (guion <= 0) return null;
         int n;
@@ -104,7 +110,7 @@ final class Expansion extends PlaceholderExpansion {
         Tops.Fila f = lista.get(n - 1);
         return switch (campo) {
             case "nombre" -> f.nombre();
-            case "valor" -> FunkyFama.num(f.fama());
+            case "valor" -> simbolo + FunkyFama.num(f.fama());
             default -> null;
         };
     }

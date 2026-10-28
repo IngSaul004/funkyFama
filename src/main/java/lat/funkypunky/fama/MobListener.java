@@ -36,8 +36,8 @@ final class MobListener implements Listener {
         SpawnReason razon = mob.getEntitySpawnReason(); // de dónde salió el mob (API de Paper)
         if (razon == SpawnReason.SPAWNER && c.getBoolean("mobs.ignorar-spawners", true)) return;
 
-        if (pl.x2.duplica("duplicar-drops-mobs")) {
-            List<ItemStack> dobles = X2.multiplicar(e.getDrops(), pl.x2.multiplicador());
+        if (pl.evento.duplica("duplicar-drops-mobs")) {
+            List<ItemStack> dobles = Evento.multiplicar(e.getDrops(), pl.evento.multiplicador());
             e.getDrops().clear();
             e.getDrops().addAll(dobles);
         }

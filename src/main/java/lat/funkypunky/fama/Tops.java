@@ -16,6 +16,7 @@ final class Tops {
     private final FunkyFama pl;
     private volatile List<Fila> jugadores = List.of();
     private volatile List<Fila> bandas = List.of();
+    private volatile List<Fila> bandasDinero = List.of();
 
     Tops(FunkyFama pl) {
         this.pl = pl;
@@ -43,8 +44,22 @@ final class Tops {
         });
         b.sort(Comparator.comparingLong(Fila::fama).reversed());
 
+        // Bandas por dinero: se lee el banco de Towny (que usa Vault → Essentials). Se redondea hacia abajo.
+        List<Fila> d = new ArrayList<>();
+        if (pl.bandas != null) {
+            for (Bandas.Saldo s : pl.bandas.saldos(pl.getConfig().getStringList("bandas.excluir-del-top-dinero"))) {
+                if (s.dinero() > 0) d.add(new Fila(s.id(), s.nombre(), (long) Math.floor(s.dinero())));
+            }
+        }
+        d.sort(Comparator.comparingLong(Fila::fama).reversed());
+
         jugadores = List.copyOf(j);
         bandas = List.copyOf(b);
+        bandasDinero = List.copyOf(d);
+    }
+
+    List<Fila> bandasDinero() {
+        return bandasDinero;
     }
 
     List<Fila> jugadores() {
