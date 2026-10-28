@@ -1,0 +1,123 @@
+# ============================================================
+#  FunkyFama: la Fama de FUNKY PUNKY MC
+#  Colores con & (Bedrock no tiene hex; Geyser lo aproxima).
+#  Después de editar: /fama recargar
+# ============================================================
+
+# ---------- Reinicio diario de los trials ----------
+# Se usa la hora de México directamente (así no hay que restar 6 horas a mano).
+# 06:00 = el mismo "nuevo día" de Towny (12h del servidor) y de Jobs (ResetTime 12:00:00).
+reinicio:
+  zona-horaria: 'America/Mexico_City'
+  hora: '06:00'
+  # Anunciar en el chat cuando los trials se reinician solos.
+  anunciar: true
+  # Vaults: a la hora del reinicio, cada jugador puede volver a usar una llave en el mismo vault.
+  vaults: true
+  # Cofres y barriles de las Trial Chambers: se vuelven a llenar (compartido: el primero que lo abre se lo lleva).
+  cofres: true
+
+# ---------- Fama por matar mobs ----------
+mobs:
+  # Mundos donde cuenta (vacío = todos). Recomendado: solo el survival.
+  mundos: [world, world_nether, world_the_end]
+  # Fama para cualquier mob hostil que no esté en la lista de abajo.
+  hostil-por-defecto: 1
+  # Fama para mobs no hostiles (vacas, cerdos...). 0 = nada.
+  pasivo-por-defecto: 0
+  # Los mobs de un spawner normal no dan Fama (evita granjas AFK).
+  ignorar-spawners: true
+  # Fama extra por cada mob que salió de un trial spawner.
+  extra-trial-spawner: 1
+  # Máximo de Fama por mobs al día por jugador (se cuenta SIN el x2). 0 = sin límite.
+  limite-diario: 50
+  # Valores propios por tipo (nombre en inglés, como en el juego).
+  valores:
+    WARDEN: 50
+    ELDER_GUARDIAN: 20
+    WITHER: 40
+    ENDER_DRAGON: 100
+    BREEZE: 3
+    BOGGED: 2
+    EVOKER: 5
+    RAVAGER: 8
+    WITCH: 2
+    ENDERMAN: 1
+
+# ---------- Fama por los trials (Trial Chambers) ----------
+trials:
+  # Vault normal (llave de trial) y vault siniestro (llave siniestra).
+  vault-normal: 10
+  vault-siniestro: 25
+  # Cofres de las Trial Chambers (por tabla de botín: chests/trial_chambers/<nombre>).
+  cofres:
+    reward: 5
+    reward_ominous: 12
+    supply: 1
+    corridor: 1
+    intersection: 1
+    intersection_barrel: 1
+    entrance: 1
+  # Para cualquier otra tabla de trial_chambers que no esté arriba.
+  cofre-por-defecto: 1
+  # FunkyCoins por abrir un vault (necesita Vault). 0 = nada, como pide el presupuesto
+  # (el dinero de los trials es solo para el top 3).
+  dinero-por-vault: 0
+
+# ---------- Evento x2 ----------
+x2:
+  multiplicador: 2
+  # Qué se duplica durante el evento.
+  duplicar-fama: true
+  duplicar-botin-vaults: true
+  duplicar-botin-cofres: true
+  # Recomendado false: duplicar los drops de TODOS los mobs mete mucha riqueza a la economía.
+  duplicar-drops-mobs: false
+  # Barra arriba de la pantalla con el tiempo restante (se ve en Java y en Bedrock).
+  bossbar: true
+
+# ---------- Bandas (Towny) ----------
+bandas:
+  # La Fama que gana un jugador también se suma a su Banda en ese momento.
+  # Si se sale de la Banda, la Fama ganada se queda en la Banda (así no se puede "llevar" ni "traspasar").
+  sumar-fama: true
+
+# ---------- Guardado ----------
+guardar-cada-minutos: 5
+
+# ---------- Mensajes ----------
+mensajes:
+  prefijo: '&#FF40FF&l✦ &dFama &8» '
+  actionbar: '&d+{fama} Fama &7({fuente}){x2}'
+  actionbar-x2: ' &6&lx2'
+  fuentes:
+    mob: 'mob'
+    vault: 'vault'
+    vault-siniestro: 'vault siniestro'
+    cofre: 'cofre de trial'
+  limite-mobs: '&7Ya llegaste al límite de Fama por mobs de hoy. ¡Ve a los trials!'
+  vault-reiniciado: '&aEste vault se reinició para ti. ¡Usa tu llave!'
+  vault-ya-abierto: '&7Ya abriste este vault hoy. Se reinicia en &f{tiempo}&7.'
+  tu-fama: '&fTu Fama: &d{fama} &8| &fBanda: &d{banda} &7({fama_banda})'
+  fama-otro: '&fFama de &d{jugador}&f: &d{fama}'
+  sin-banda: '—'
+  top-titulo-jugadores: '&#FF40FF&l✦ Top Fama: jugadores ✦'
+  top-titulo-bandas: '&#FF40FF&l✦ Top Fama: Bandas ✦'
+  top-linea: '&d#{puesto} &f{nombre} &8» &d{fama}'
+  top-vacio: '&7Todavía nadie tiene Fama.'
+  info: '&fx2: {x2} &8| &fLos trials se reinician en &d{tiempo}'
+  x2-si: '&6&lACTIVO &7({tiempo})'
+  x2-no: '&7apagado'
+  x2-activado: '&6&l¡TRIALS x2! &fDoble de Fama y de botín durante &e{tiempo}&f.'
+  x2-terminado: '&7El evento &6x2 &7terminó. ¡Gracias por jugar!'
+  x2-bossbar: '&6&l✦ TRIALS x2 ✦ &f{tiempo}'
+  reinicio-auto: '&a¡Los trials se reiniciaron! Los vaults y cofres vuelven a estar disponibles.'
+  reinicio-manual: '&a¡El staff reinició los trials! Los vaults y cofres vuelven a estar disponibles.'
+  admin-hecho: '&a{accion} &f{cantidad} &ade Fama a &f{objetivo}&a. Ahora tiene &d{fama}&a.'
+  temporada-hecha: '&aFama de la temporada borrada. Copia guardada en &f{archivo}&a.'
+  recargado: '&aConfig recargado.'
+  sin-permiso: '&cNo tienes permiso.'
+  jugador-no-encontrado: '&cNo encuentro a ese jugador (tiene que haber entrado al servidor alguna vez).'
+  banda-no-encontrada: '&cNo encuentro esa Banda.'
+  sin-towny: '&cTowny no está instalado: no hay Bandas.'
+  numero-invalido: '&cEse número no es válido.'

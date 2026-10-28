@@ -1,0 +1,39 @@
+name: FunkyFama
+version: '${version}'
+main: lat.funkypunky.fama.FunkyFama
+api-version: '26.1'
+description: Fama de jugadores y Bandas para FUNKY PUNKY MC (mobs, vaults y cofres de Trial Chambers, reinicio diario y evento x2).
+authors: [SAULPLAY112]
+softdepend: [PlaceholderAPI, Towny, Vault]
+
+commands:
+  fama:
+    description: Ver y administrar la Fama.
+    usage: /fama [ver|top|info|dar|quitar|establecer|banda|x2|reiniciar|temporada|recargar]
+    aliases: [fame]
+
+permissions:
+  funkyfama.ver:
+    description: Ver tu propia Fama.
+    default: true
+  funkyfama.ver.otros:
+    description: Ver la Fama de otro jugador.
+    default: true
+  funkyfama.top:
+    description: Ver los tops de Fama.
+    default: true
+  funkyfama.admin:
+    description: Dar, quitar o establecer Fama (jugadores y Bandas) y recargar el config.
+    default: op
+  funkyfama.x2:
+    description: Activar o desactivar el evento x2.
+    default: op
+  funkyfama.reiniciar:
+    description: Reiniciar los trials a mano.
+    default: op
+  funkyfama.temporada:
+    description: Borrar la Fama de todos (fin de temporada).
+    default: false
+  funkyfama.excluir:
+    description: Quien lo tenga NO gana Fama (cuentas de staff). Ojo, el comodín * lo incluye.
+    default: false
