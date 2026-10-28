@@ -35,10 +35,9 @@ final class Tops {
             String nombre = d.nombre;
             if (pl.bandas != null) {
                 String actual = pl.bandas.nombreActual(id);
-                if (actual != null) {
-                    nombre = actual;
-                    d.nombre = actual;                       // la Banda se renombró
-                }
+                if (actual == null) return;                  // la Banda se borró: ya no sale en el top
+                nombre = actual;
+                d.nombre = actual;                           // por si se renombró
             }
             b.add(new Fila(id, nombre, d.fama));
         });
