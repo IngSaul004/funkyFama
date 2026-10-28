@@ -39,6 +39,13 @@ final class Datos {
         long armado;      // cuándo se llenó por última vez
     }
 
+    static final class Skin {
+        String url;       // http://textures.minecraft.net/texture/...
+        boolean slim;     // brazos delgados
+        String nombre;
+    }
+
+    final Map<UUID, Skin> skins = new ConcurrentHashMap<>();
     final Map<UUID, Jugador> jugadores = new ConcurrentHashMap<>();
     final Map<UUID, Banda> bandas = new ConcurrentHashMap<>();
     /** vault ("mundo;x;y;z") -> jugador -> cuándo lo abrió */
@@ -130,6 +137,17 @@ final class Datos {
             if (c.loot != null) cofres.put(k, c);
         }
 
+        ConfigurationSection ss = y.getConfigurationSection("skins");
+        if (ss != null) for (String k : ss.getKeys(false)) {
+            UUID id = uuid(k);
+            if (id == null) continue;
+            Skin s = new Skin();
+            s.url = ss.getString(k + ".url");
+            s.slim = ss.getBoolean(k + ".slim");
+            s.nombre = ss.getString(k + ".nombre");
+            if (s.url != null) skins.put(id, s);
+        }
+
         x2Fin = y.getLong("x2-fin");
         x2Duracion = y.getLong("x2-duracion");
         eventoMult = Math.max(1, y.getInt("evento-multiplicador", 1));
@@ -159,6 +177,11 @@ final class Datos {
         cofres.forEach((k, c) -> {
             y.set("cofres." + k + ".loot", c.loot);
             y.set("cofres." + k + ".armado", c.armado);
+        });
+        skins.forEach((id, s) -> {
+            y.set("skins." + id + ".url", s.url);
+            y.set("skins." + id + ".slim", s.slim);
+            y.set("skins." + id + ".nombre", s.nombre);
         });
         y.set("x2-fin", x2Fin);
         y.set("x2-duracion", x2Duracion);

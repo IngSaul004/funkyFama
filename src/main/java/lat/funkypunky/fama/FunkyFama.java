@@ -35,6 +35,7 @@ public final class FunkyFama extends JavaPlugin {
     Fama fama;
     Evento evento;
     Tops tops;
+    SkinsNpc skinsNpc;   // null si no hay PlaceholderAPI
 
     private long periodoVisto;
     private int segundos;
@@ -74,6 +75,8 @@ public final class FunkyFama extends JavaPlugin {
 
         if (getServer().getPluginManager().isPluginEnabled("PlaceholderAPI")) {
             new Expansion(this).register();
+            skinsNpc = new SkinsNpc(this);
+            getServer().getPluginManager().registerEvents(skinsNpc, this);
             getLogger().info("PlaceholderAPI encontrado: variables %funkyfama_...% listas para TAB y ajLeaderboards.");
         }
 
@@ -156,6 +159,7 @@ public final class FunkyFama extends JavaPlugin {
         if (++segundos >= 60) {
             segundos = 0;
             tops.recalcular();
+            if (skinsNpc != null) skinsNpc.revisar();
         }
     }
 

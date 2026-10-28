@@ -32,6 +32,7 @@ import java.util.UUID;
  *                                          tiempo: 30m, 2h, 1d (número solo = minutos)
  * /fama reiniciar                          reinicia los trials ya
  * /fama temporada confirmar                borra la Fama de todos (guarda copia)
+ * /fama npcs                               vuelve a poner las skins de las NPCs del top
  * /fama recargar
  */
 final class Comando implements TabExecutor {
@@ -68,6 +69,16 @@ final class Comando implements TabExecutor {
             case "evento": return evento(s, a);
             case "reiniciar": return reiniciar(s);
             case "temporada": return temporada(s, a);
+            case "npcs": {
+                if (!s.hasPermission("funkyfama.admin")) return sinPermiso(s);
+                if (pl.skinsNpc == null) {
+                    s.sendMessage(FunkyFama.color("&cNecesita PlaceholderAPI."));
+                    return true;
+                }
+                pl.skinsNpc.forzar();
+                s.sendMessage(pl.conPrefijo("npcs-actualizadas"));
+                return true;
+            }
             case "recargar": {
                 if (!s.hasPermission("funkyfama.admin")) return sinPermiso(s);
                 pl.recargar();
@@ -297,7 +308,7 @@ final class Comando implements TabExecutor {
         l.add("&f/fama &7tu Fama · &f/fama ver [jugador] · &f/fama top [jugadores|bandas] · &f/fama info");
         if (s.hasPermission("funkyfama.admin")) {
             l.add("&f/fama dar|quitar [jugador] [n] [motivo] · &f/fama establecer [jugador] [n]");
-            l.add("&f/fama banda dar|quitar [banda] [n] [motivo] · &f/fama recargar");
+            l.add("&f/fama banda dar|quitar [banda] [n] [motivo] · &f/fama npcs &7(actualiza skins) · &f/fama recargar");
         }
         if (s.hasPermission("funkyfama.evento")) l.add("&f/fama evento [multiplicador] [tiempo] &7(ej. 3 2h) · &f/fama evento desactivar");
         if (s.hasPermission("funkyfama.reiniciar")) l.add("&f/fama reiniciar &7(reinicia los trials ya)");
@@ -311,7 +322,7 @@ final class Comando implements TabExecutor {
         List<String> op = new ArrayList<>();
         if (a.length == 1) {
             op.addAll(List.of("ver", "top", "info"));
-            if (s.hasPermission("funkyfama.admin")) op.addAll(List.of("dar", "quitar", "establecer", "banda", "recargar"));
+            if (s.hasPermission("funkyfama.admin")) op.addAll(List.of("dar", "quitar", "establecer", "banda", "npcs", "recargar"));
             if (s.hasPermission("funkyfama.evento")) op.add("evento");
             if (s.hasPermission("funkyfama.reiniciar")) op.add("reiniciar");
             if (s.hasPermission("funkyfama.temporada")) op.add("temporada");

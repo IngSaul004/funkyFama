@@ -90,6 +90,18 @@ bandas:
   # Ejemplo: la Banda de prueba "FP" mientras exista.
   excluir-del-top-dinero: [FP]
 
+# ---------- NPCs de los tops (FancyNpcs + ajLeaderboards) ----------
+# Cada minuto revisa quién va en cada puesto y, si cambió, le pone su skin a la NPC.
+# Sirve con cuentas Java premium, Bedrock (skin de Geyser) y no premium (SkinsRestorer).
+# Formato:  nombre-de-la-npc: 'nombre-del-top:puesto'
+npcs-top:
+  activado: true
+  tipo: alltime
+  lista:
+    top_horas_1: 'statistic_hours_played:1'
+    top_horas_2: 'statistic_hours_played:2'
+    top_horas_3: 'statistic_hours_played:3'
+
 # ---------- Guardado ----------
 guardar-cada-minutos: 5
 
@@ -135,6 +147,7 @@ mensajes:
   admin-hecho: '&a{accion} &f{cantidad} &ade Fama a &f{objetivo}&a. Ahora tiene &d{fama}&a.'
   temporada-hecha: '&aFama de la temporada borrada. Copia guardada en &f{archivo}&a.'
   recargado: '&aConfig recargado.'
+  npcs-actualizadas: '&aSkins de las NPCs revisadas. Si alguna cambió, verás el aviso en la consola.'
   sin-permiso: '&cNo tienes permiso.'
   jugador-no-encontrado: '&cNo encuentro a ese jugador (tiene que haber entrado al servidor alguna vez).'
   banda-no-encontrada: '&cNo encuentro esa Banda.'
